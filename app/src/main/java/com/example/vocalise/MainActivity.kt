@@ -30,7 +30,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity() {
 
     // dialog stuff
-    private var loadingDialog: AlertDialog? = null
+    private lateinit var loadingDialog: AlertDialog
 
     // camera stuff
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
@@ -140,16 +140,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLoadingDialog() {
-
-        if (loadingDialog == null) {
             val builder = AlertDialog.Builder(this)
             val dialogView = layoutInflater.inflate(R.layout.loading_dialog, null)
 
             builder.setView(dialogView)
             loadingDialog = builder.create()
-            loadingDialog?.show()
+            loadingDialog.show()
 
-            loadingDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            loadingDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+
+    private fun hideLoadingDialog() {
+        if (::loadingDialog.isInitialized && loadingDialog.isShowing) {
+            loadingDialog.dismiss()
         }
     }
 
