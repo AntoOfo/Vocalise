@@ -17,6 +17,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 // enables hilt injection to this activity
@@ -54,6 +55,17 @@ class MainActivity : AppCompatActivity() {
                         bitmap = imageBitmap,
                         onResult = { recognisedText ->
                             if (recognisedText.isNotBlank()) {
+                                // turn imageBitmap to byte array to pass it to next activity
+                                val stream = ByteArrayOutputStream()
+                                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                val byteArray = stream.toByteArray()
+
+                                // open new activity
+                                val intent = Intent(this, TTSDisplayActivity::class.java)
+                                intent.putExtra("recognised_text", recognisedText)
+                                intent.putExtra("recognised_image", byteArray)
+                                startActivity(intent)
+
                                 ttsManager.speak("Hey! I found the following text: $recognisedText")
                             } else {
                                 ttsManager.speak("Sorry, I can't find any text in this image.")
