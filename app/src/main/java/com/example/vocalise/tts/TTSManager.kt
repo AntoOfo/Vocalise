@@ -14,20 +14,24 @@ class TTSManager @Inject constructor(
     @ApplicationContext private val context: Context
 ){
     private var tts: TextToSpeech? = null
+    private var isReady = false
 
     // initialisation block that runs when class is first created
     init {
         tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 tts?.language = Locale.UK
+                isReady = true
             }
         }
     }
 
     // makes tts speak a given string
     fun speak(text: String) {
-        // speaks immediately, cancels anything alr bein spoken
-        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null , null)
+        if (isReady) {
+            // speaks immediately, cancels anything alr bein spoken
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
     }
 
     // cleanup method
