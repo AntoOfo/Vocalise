@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -27,6 +28,9 @@ import javax.inject.Inject
 // enables hilt injection to this activity
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    // dialog stuff
+    private var loadingDialog: AlertDialog? = null
 
     // camera stuff
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
@@ -132,6 +136,20 @@ class MainActivity : AppCompatActivity() {
                     "Camera permission is required!", Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+    }
+
+    private fun showLoadingDialog() {
+
+        if (loadingDialog == null) {
+            val builder = AlertDialog.Builder(this)
+            val dialogView = layoutInflater.inflate(R.layout.loading_dialog, null)
+
+            builder.setView(dialogView)
+            loadingDialog = builder.create()
+            loadingDialog?.show()
+
+            loadingDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         }
     }
 
