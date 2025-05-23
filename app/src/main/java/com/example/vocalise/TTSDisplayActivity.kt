@@ -2,6 +2,7 @@ package com.example.vocalise
 
 import android.graphics.BitmapFactory
 import android.media.Image
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -27,15 +28,21 @@ class TTSDisplayActivity : AppCompatActivity() {
 
         // passed on data from mainactivity
         val foundText = intent.getStringExtra("recognised_text")
-        val foundImage = intent.getByteArrayExtra("recognised_image")
+        val photoUriString = intent.getStringExtra("photo_uri")
 
-        if (foundText != null) {
-            val bitmap = BitmapFactory.decodeByteArray(foundImage, 0, foundImage!!.size)
-            recogImage.setImageBitmap(bitmap)
+        if (foundText != null && photoUriString != null) {
             recogText.text = foundText
-        } else {
-            Toast.makeText(this, "No image data passed", Toast.LENGTH_SHORT).show()
-        }
 
+            try {
+                val photoUri = Uri.parse(photoUriString)
+                val inputStream = contentResolver.openInputStream(photoUri)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                recogImage.setImageBitmap(bitmap)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "Missing image or text", Toast.LENGTH_SHORT).show()
+        }
     }
 }

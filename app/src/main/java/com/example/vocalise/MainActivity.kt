@@ -2,6 +2,8 @@ package com.example.vocalise
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
@@ -10,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.vocalise.tts.TTSManager
@@ -18,6 +21,7 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.ByteArrayOutputStream
+import java.io.File
 import javax.inject.Inject
 
 // enables hilt injection to this activity
@@ -27,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     // camera stuff
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
     private val CAMERA_PERMISSION_CODE = 1001
+    private var photoUri: Uri? = null
 
     // injecting an instance of ttsmanager class
     @Inject lateinit var ttsManager: TTSManager
@@ -47,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         // initalising camera launcher
         cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+                val imageBitmap =  BitmapFactory.decodeStream(contentResolver.openInputStream(photoUri!!))
 
                 // conditionals for if text is recognised
                 if (imageBitmap != null) {
@@ -63,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                                 // open new activity
                                 val intent = Intent(this, TTSDisplayActivity::class.java)
                                 intent.putExtra("recognised_text", recognisedText)
-                                intent.putExtra("recognised_image", byteArray)
+                                intent.putExtra("photo_uri", photoUri.toString())  // passing filepath
                                 startActivity(intent)
 
                                 ttsManager.speak("Hey! I found the following text: $recognisedText")
@@ -107,7 +112,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun launchCamera() {
+        // makes temporary file in cache directory
+        val photoFile = File.createTempFile("IMG_", ".jpg", externalCacheDir)
+        photoUri = FileProvider.getUriForFile(this, "$packageName.provider", photoFile)
+
+        // camera intent with output uri
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
         cameraLauncher.launch(intent)
     }
 
