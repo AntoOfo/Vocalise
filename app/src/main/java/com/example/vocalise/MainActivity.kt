@@ -56,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         // initalising camera launcher
         cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
+                showLoadingDialog()
                 val imageBitmap =  BitmapFactory.decodeStream(contentResolver.openInputStream(photoUri!!))
 
                 // conditionals for if text is recognised
@@ -63,6 +64,7 @@ class MainActivity : AppCompatActivity() {
                     runTextRecog(
                         bitmap = imageBitmap,
                         onResult = { recognisedText ->
+                            hideLoadingDialog()
                             if (recognisedText.isNotBlank()) {
                                 // open new activity
                                 val intent = Intent(this, TTSDisplayActivity::class.java)
