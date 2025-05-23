@@ -60,11 +60,6 @@ class MainActivity : AppCompatActivity() {
                         bitmap = imageBitmap,
                         onResult = { recognisedText ->
                             if (recognisedText.isNotBlank()) {
-                                // turn imageBitmap to byte array to pass it to next activity
-                                val stream = ByteArrayOutputStream()
-                                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                                val byteArray = stream.toByteArray()
-
                                 // open new activity
                                 val intent = Intent(this, TTSDisplayActivity::class.java)
                                 intent.putExtra("recognised_text", recognisedText)
