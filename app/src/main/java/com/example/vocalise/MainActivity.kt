@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.vocalise.tts.TTSManager
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -44,11 +47,31 @@ class MainActivity : AppCompatActivity() {
         cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val imageBitmap = result.data?.extras?.get("data") as? Bitmap
-                ttsManager.speak("Picture taken successfully")
+
+                // conditionals for if text is recognised
+                if (imageBitmap != null) {
+                    runTextRecog(
+                        bitmap = imageBitmap,
+                        onResult = { recognisedText ->
+                            if (recognisedText.isNotBlank()) {
+                                ttsManager.speak("Hey! I found the following text: $recognisedText")
+                            } else {
+                                ttsManager.speak("Sorry, I can't find any text in this image.")
+                            }
+                        },
+                        onError = { e ->
+                            Toast.makeText(this, "Text recognition failed", Toast.LENGTH_SHORT).show()
+                            ttsManager.speak("The text recognition failed.")
+                        }
+                    )
+                } else {
+                    Toast.makeText(this, "Failed to capture image", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(this, "Camera cancelled", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         startBtn.setOnClickListener {
             checkCameraPermissionAndLaunch()
@@ -92,5 +115,21 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
+    }
+
+    // function for text recognition from ml kit
+    private fun runTextRecog(
+        bitmap: Bitmap,     // scans for text
+        onResult: (String) -> Unit,    // callback w recognised text
+        onError: (Exception) -> Unit       // error
+    ) {
+        val image = InputImage.fromBitmap(bitmap, 0)
+
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+        recognizer.process(image).addOnSuccessListener { visionText ->
+            onResult(visionText.text)
+        }
+            .addOnFailureListener { e -> onError(e)}
     }
 }
