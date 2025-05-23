@@ -1,10 +1,14 @@
 package com.example.vocalise
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -36,8 +40,18 @@ class MainActivity : AppCompatActivity() {
 
         val startBtn = findViewById<Button>(R.id.startedBtn)
 
+        // initalising camera launcher
+        cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+                ttsManager.speak("Picture taken successfully")
+            } else {
+                Toast.makeText(this, "Camera cancelled", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         startBtn.setOnClickListener {
-            ttsManager.speak("Get started button clicked")
+            checkCameraPermissionAndLaunch()
 
         }
     }
@@ -45,5 +59,38 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         ttsManager.shutdown()
         super.onDestroy()
+    }
+
+    private fun checkCameraPermissionAndLaunch() {
+        if (checkSelfPermission(android.Manifest.permission.CAMERA) ==
+            android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            launchCamera()
+        } else {
+            requestPermissions(arrayOf(android.Manifest.permission.CAMERA),
+                CAMERA_PERMISSION_CODE)
+        }
+    }
+
+    private fun launchCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(intent)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] ==
+                android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                launchCamera()
+            } else {
+                Toast.makeText(this,
+                    "Camera permission is required!", Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 }
