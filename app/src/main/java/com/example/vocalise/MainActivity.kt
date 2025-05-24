@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // force light mode
+        // force light  mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
 
@@ -174,7 +174,17 @@ class MainActivity : AppCompatActivity() {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
         recognizer.process(image).addOnSuccessListener { visionText ->
-            onResult(visionText.text)
+            val structuredText = StringBuilder()
+            // from mlkit doc, altered a bit
+            for (block in visionText.textBlocks) {
+                for (line in block.lines) {
+                    for (element in line.elements) {
+                        structuredText.append(element.text).append(" ")
+                    }
+                    structuredText.append("\n") // line break after each line
+                }
+            }
+            onResult(structuredText.toString().trim())
         }
             .addOnFailureListener { e -> onError(e)}
     }
