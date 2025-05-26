@@ -45,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/archivo_medium"
+                android:gravity="center"
                 android:text="Recognised text placeholder."
                 android:textColor="#FBFBFB"
                 android:textSize="16sp" />

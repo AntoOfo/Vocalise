@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                                 ttsManager.speak("Hey! I found the following text: $recognisedText")
                             } else {
                                 ttsManager.speak("Sorry, I can't find any text in this image.")
+                                Toast.makeText(this, "No text found in the image", Toast.LENGTH_SHORT).show()
                             }
                         },
                         onError = { e ->
