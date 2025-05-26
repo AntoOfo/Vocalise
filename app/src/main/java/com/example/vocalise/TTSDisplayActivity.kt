@@ -84,8 +84,23 @@ class TTSDisplayActivity : AppCompatActivity() {
         }
 
         backBtn.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            backBtn.animate()
+                .scaleX(0.9f)
+                .scaleY(0.9f)
+                .alpha(0.5f)
+                .setDuration(100)
+                .withEndAction {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+
+                    backBtn.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .alpha(1f)
+                        .setDuration(100)
+                        .start()
+                }
+                .start()
         }
 
         cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -120,7 +135,22 @@ class TTSDisplayActivity : AppCompatActivity() {
         }
 
         scanBtn.setOnClickListener {
-            checkCameraPermissionAndLaunch()
+            scanBtn.animate()
+                .scaleX(0.9f)
+                .scaleY(0.9f)
+                .alpha(0.5f)
+                .setDuration(100)
+                .withEndAction {
+                    checkCameraPermissionAndLaunch()
+
+                    scanBtn.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .alpha(1f)
+                        .setDuration(100)
+                        .start()
+                }
+                .start()
         }
     }
 

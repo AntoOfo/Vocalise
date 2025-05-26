@@ -97,8 +97,22 @@ class MainActivity : AppCompatActivity() {
 
 
         startBtn.setOnClickListener {
-            checkCameraPermissionAndLaunch()
+            startBtn.animate()
+                .scaleX(0.9f)
+                .scaleY(0.9f)
+                .alpha(0.5f)
+                .setDuration(100)
+                .withEndAction {
+                    checkCameraPermissionAndLaunch()
 
+                    startBtn.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .alpha(1f)
+                        .setDuration(100)
+                        .start()
+                }
+                .start()
         }
     }
 
