@@ -1,9 +1,11 @@
 package com.example.vocalise
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -25,6 +27,8 @@ class TTSDisplayActivity : AppCompatActivity() {
         // ui elements
         val recogText = findViewById<TextView>(R.id.recogText)
         val recogImage = findViewById<ImageView>(R.id.recogImage)
+        val backBtn = findViewById<Button>(R.id.backBtn)
+        val scanBtn = findViewById<Button>(R.id.scanBtn)
 
         // passed on data from mainactivity
         val foundText = intent.getStringExtra("recognised_text")
@@ -44,5 +48,11 @@ class TTSDisplayActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, "Missing image or text", Toast.LENGTH_SHORT).show()
         }
+
+        backBtn.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }
