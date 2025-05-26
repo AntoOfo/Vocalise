@@ -24,9 +24,11 @@ import com.example.vocalise.tts.TTSManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import java.io.File
 
+@AndroidEntryPoint
 class TTSDisplayActivity : AppCompatActivity() {
 
     // dialog stuff
