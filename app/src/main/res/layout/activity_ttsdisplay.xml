@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient"
     tools:context=".TTSDisplayActivity">
 
     <ImageView
@@ -17,7 +18,10 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/avatars"
+        android:background="@drawable/curved_corners"
+        android:clipToOutline="true"/>
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -40,7 +44,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
+                android:fontFamily="@font/archivo_medium"
                 android:text="Recognised text placeholder."
+                android:textColor="#FBFBFB"
                 android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
@@ -61,12 +67,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="124dp"
+            android:backgroundTint="#878686"
             android:text="Back" />
 
         <Button
             android:id="@+id/scanBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#878686"
             android:text="Scan Again" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
