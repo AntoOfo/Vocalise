@@ -61,7 +61,7 @@ class TTSDisplayActivity : AppCompatActivity() {
         // ui elements
         recogText = findViewById(R.id.recogText)
         recogImage = findViewById(R.id.recogImage)
-        val backBtn = findViewById<Button>(R.id.backBtn)
+        val backBtn = findViewById<ImageView>(R.id.backBtn)
         val scanBtn = findViewById<Button>(R.id.scanBtn)
 
         // passed on data from mainactivity
